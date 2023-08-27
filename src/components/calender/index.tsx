@@ -3,9 +3,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import "@/app/globals.css";
 
-const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
+const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"];
 
 function Calendar() {
   const currentDate = new Date();
@@ -15,6 +14,7 @@ function Calendar() {
 
   const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const calendarRef = useRef(null);
   const startXRef = useRef(null);
@@ -79,8 +79,9 @@ function Calendar() {
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
   const handleDateClick = (dayNumber: any) => {
-    console.log(`Clicked on ${currentYear}-${currentMonth + 1}-${dayNumber}`);
+    setSelectedDate(dayNumber);
   };
+
   return (
     <div>
       <button
@@ -109,12 +110,19 @@ function Calendar() {
           ))}
           {Array.from({ length: daysInMonth }, (_, index) => {
             const dayNumber = index + 1;
+            const isToday =
+              dayNumber === currentDate.getDate() &&
+              currentMonth === currentDate.getMonth() &&
+              currentYear === currentDate.getFullYear();
+
             return (
               <div
                 key={`day-${index}`}
                 className={`flex-center p-1 ${
                   dayNumber > 0 && dayNumber <= daysInMonth
-                    ? "bg-gray-200 cursor-pointer rounded-lg ring-1 ring-gray-300 w-8 h-8"
+                    ? `bg-${
+                        selectedDate === dayNumber || isToday ? "gray-700" : "gray-200"
+                      } cursor-pointer rounded-lg ring-1 ring-gray-300 w-8 h-8`
                     : ""
                 }`}
               >
@@ -128,7 +136,7 @@ function Calendar() {
                       }}
                     />
                     <div className="flex-center sb-10-600 text-gray-800">
-                      {dayNumber > 0 && dayNumber <= daysInMonth ? dayNumber : ""}
+                      {isToday ? "오늘" : dayNumber}
                     </div>
                   </>
                 )}
